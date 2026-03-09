@@ -1,0 +1,33 @@
+.btn-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-style {
+    font-family: "Roboto", sans-serif;
+    font-size: 0.875rem;
+    color: rgba(52, 52, 52, 1);
+    font-weight: 700;
+    background-color: #fae453;
+    width: 100%;
+    padding: 8px 0px;
+    margin-top: 1.5rem;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+    .btn-style:hover {
+    font-family: "Roboto", sans-serif;
+    font-size: 0.875rem;
+    color: #fae453 ;
+    font-weight: 700;
+    background-color: rgba(52, 52, 52, 1);
+    width: 100%;
+    padding: 8px 0px;
+    margin-top: 1.5rem;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }

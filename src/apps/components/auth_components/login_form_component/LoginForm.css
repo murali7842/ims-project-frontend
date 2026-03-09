@@ -1,0 +1,109 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.login-form-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.login-header {
+  margin-bottom: 40px;
+}
+
+.logo {
+  margin-bottom: 30px;
+}
+
+.logo-text {
+  background: linear-gradient(135deg, #ff3b3b 0%, #ff5555 100%);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 1px;
+  display: inline-block;
+  box-shadow: 0 4px 15px rgba(255, 59, 59, 0.3);
+}
+
+.welcome-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 10px 0;
+  letter-spacing: -0.5px;
+}
+
+.signin-header {
+  margin: 20px 0 15px 0;
+}
+
+.signin-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.register-text {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.register-link {
+  color: #ff3b3b;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.register-link:hover {
+  color: #ff5555;
+  text-decoration: underline;
+}
+
+.login-form {
+  margin-top: 30px;
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  font-size: 13px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #666;
+  user-select: none;
+}
+
+.remember-me input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #ff3b3b;
+}
+
+.remember-me span {
+  font-weight: 400;
+}
+
+.forgot-password {
+  color: #666;
+  text-decoration: none;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+  color: #ff3b3b;
+} */
