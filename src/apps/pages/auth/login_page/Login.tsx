@@ -13,6 +13,7 @@ const LoginLayout = ()=>{
          <LoginForm />
       </div>
     </div>
+    
   )
 }
 export default LoginLayout;
