@@ -1,0 +1,102 @@
+/* MAIN CONTAINER */
+.register-container {
+  display: flex;
+  width: 100vw;
+  font-family: "Poppins", sans-serif;
+}
+
+/* LEFT SIDE (60%) */
+.register-left {
+  width: 60%;
+  height: 100%;
+}
+
+.register-left img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+
+/* RIGHT SIDE */
+.register-right {
+  width: 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+}
+
+/* BOX */
+.register-box {
+  width: 100%;
+  max-width: 360px;
+}
+
+/* HEADER */
+.register-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.logo {
+  width: 75px;
+  margin-bottom: 10px;
+}
+
+.welcome {
+  font-family: Poppins;
+  font-weight: 700;
+  font-size: 38px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+
+/* CONTENT */
+.register-content {
+  text-align: left;
+}
+
+.register-content .sign_in {
+  font-family: Poppins;
+  font-weight: 550;
+  font-size: 30px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+
+.sub-text {
+  color: #000000;
+  margin-bottom: 20px;
+  font-family: Poppins;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+
+.sub-text span {
+  color: red;
+  cursor: pointer;
+  font-weight: 550;
+  margin-bottom: 20px;
+}
+
+/* CHECKBOX ROW */
+.extra-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
+.extra-options div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.forgot {
+  cursor: pointer;
+}
