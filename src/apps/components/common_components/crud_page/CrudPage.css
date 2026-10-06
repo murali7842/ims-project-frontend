@@ -1,0 +1,152 @@
+.crud-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.crud-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.crud-page-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+/* TOOLBAR */
+.crud-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.crud-search {
+  flex: 1;
+  min-width: 220px;
+  max-width: 380px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 25px;
+  color: #888888;
+}
+
+.crud-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #000000;
+  font-family: Poppins, sans-serif;
+  font-size: 14px;
+}
+
+.crud-filter {
+  padding: 9px 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 25px;
+  background: #ffffff;
+  color: #333333;
+  font-family: Poppins, sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+
+/* ROW ACTIONS */
+.crud-row-actions {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.crud-row-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #555555;
+}
+
+.crud-row-actions button:hover {
+  border-color: #333333;
+  color: #000000;
+}
+
+.crud-row-actions button.danger:hover {
+  border-color: #ff2e2e;
+  color: #ff2e2e;
+}
+
+/* FORM GRID (inside modal) */
+.crud-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.crud-form-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .crud-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* STATUS BADGE (used by module column renderers) */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #f0f0f0;
+  color: #555555;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-badge.red {
+  background: #fff0f0;
+  color: #e60000;
+}
+
+.status-badge.green {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.status-badge.blue {
+  background: #eef4ff;
+  color: #3538cd;
+}
+
+.status-badge.amber {
+  background: #fffaeb;
+  color: #b54708;
+}
+
+/* TOAST */
+.crud-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 200;
+  padding: 12px 20px;
+  border-radius: 10px;
+  background: #222222;
+  color: #ffffff;
+  font-size: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}

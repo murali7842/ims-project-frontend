@@ -1,4 +1,6 @@
 import { axiosLoginInstance } from "../../../../config/config";
+import { decodeToken, normalizeRole, setTokens, setUser } from "../../../utils/authStorage";
+import { getUserById } from "../user/UserApi";
 
 export const login = async (data: URLSearchParams) => {
   try {
@@ -15,6 +17,37 @@ export const login = async (data: URLSearchParams) => {
   } catch (error) {
     console.error("Error during login:", error);
     throw error;
+  }
+};
+
+// Saves the tokens and the logged in user's profile (name, role, institution).
+// The access token only carries the user id and email, so the profile comes
+// from GET /user/{id}. That endpoint is admin only, so for other roles we fall
+// back to what the token has.
+export const startSession = async (accessToken: string, refreshToken?: string | null) => {
+  setTokens(accessToken, refreshToken);
+
+  const payload = decodeToken(accessToken);
+  const userId = Number(payload?.sub);
+
+  try {
+    const { body: user } = await getUserById(userId);
+    if (!user) throw new Error("User not found");
+
+    setUser({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: normalizeRole(user.role),
+      institution: user.institution,
+    });
+  } catch {
+    setUser({
+      id: userId,
+      name: payload?.name ?? payload?.email ?? "User",
+      email: payload?.email ?? "",
+      role: normalizeRole(payload?.role),
+    });
   }
 };
 
