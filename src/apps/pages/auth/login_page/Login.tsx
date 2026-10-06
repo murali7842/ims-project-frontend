@@ -1,7 +1,8 @@
 import "./login.css";
 import { useState } from "react";
-import { login } from "../../../pages/api/auth/AuthApi";
+import { login, startSession } from "../../../pages/api/auth/AuthApi";
 import { useNavigate } from "react-router-dom";
+import { getErrorMessage } from "../../../utils/apiError";
 
 
 import authImage from "../../../../assets/auth_images/auth_image.png";
@@ -33,16 +34,12 @@ const Login = () => {
         formData.append("password", password);
   
         const response = await login(formData as any);
-  
-        console.log("Login Success:", response);
-        console.log("Login email:", email);
-        console.log("Login passwored:", password);
-  
-        localStorage.setItem("token", response.access_token);
+
+        await startSession(response.access_token, response.refresh_token);
         navigate("/dashboard")
-  
-      } catch (error: any) {
-        alert(error?.response?.data?.message || "Login failed");
+
+      } catch (error) {
+        alert(getErrorMessage(error, "Login failed"));
       } finally {
         setLoading(false);
       }
@@ -116,10 +113,11 @@ const Login = () => {
             </div>
 
             {/* LOGIN BUTTON */}
-            <AuthButton 
-              text="Login" 
+            <AuthButton
+              text={loading ? "Signing in..." : "Login"}
               onClick={handleLogin}
               type="submit"
+              disabled={loading}
             />
 
           </div>

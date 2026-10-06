@@ -1,0 +1,252 @@
+.assessment-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 960px;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.editor-title,
+.editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.editor-title h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.editor-grid .span-2 {
+  grid-column: span 2;
+}
+
+.editor-grid .span-full {
+  grid-column: 1 / -1;
+}
+
+/* INSTITUTIONS */
+.institution-picker {
+  margin-top: 16px;
+}
+
+.institution-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.institution-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 20px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* SECTIONS */
+.section-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 14px;
+  border-left: 4px solid #ff2e2e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-number {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ff2e2e;
+  white-space: nowrap;
+}
+
+.section-name-input {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-bottom: 1px solid #e5e5e5;
+  background: transparent;
+  color: #000000;
+  font-family: Poppins, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  outline: none;
+}
+
+.section-name-input:focus {
+  border-bottom-color: #ff2e2e;
+}
+
+/* QUESTIONS */
+.question-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  background: #fcfcfc;
+}
+
+.question-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.question-number {
+  font-weight: 600;
+  color: #555555;
+}
+
+.required-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 13px;
+  color: #555555;
+  cursor: pointer;
+}
+
+.question-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+}
+
+.question-grid.four {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.question-hint {
+  font-size: 13px;
+  font-weight: 500;
+  color: #555555;
+}
+
+.question-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.option-row input[type="radio"],
+.option-row input[type="checkbox"] {
+  accent-color: #ff2e2e;
+  width: 16px;
+  height: 16px;
+}
+
+.option-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #000000;
+  font-family: Poppins, sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+
+.option-input:focus {
+  border-color: #ff2e2e;
+}
+
+/* SMALL BUTTONS */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #555555;
+}
+
+.icon-btn:hover:not(:disabled) {
+  border-color: #333333;
+  color: #000000;
+}
+
+.icon-btn.danger:hover {
+  border-color: #ff2e2e;
+  color: #ff2e2e;
+}
+
+.icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 4px 0;
+  border: none;
+  background: transparent;
+  color: #ff2e2e;
+  font-family: Poppins, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.link-btn:hover {
+  color: #e60000;
+}
+
+.add-section-btn {
+  align-self: flex-start;
+}
+
+@media (max-width: 768px) {
+  .editor-grid,
+  .question-grid,
+  .question-grid.four {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-grid .span-2 {
+    grid-column: auto;
+  }
+}
