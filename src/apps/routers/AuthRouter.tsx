@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 
 const Login = React.lazy(() => import('../pages/auth/login_page/Login.tsx'));
 const Register = React.lazy(() => import('../pages/auth/register_page/Register.tsx'));
+const ForgotPassword = React.lazy(() => import('../pages/auth/forgot_page/ForgotPassword.tsx'));
+const ResetPassword = React.lazy(() => import('../pages/auth/verify_otp/ResetPassword.tsx'));
 
 
 
@@ -14,6 +16,8 @@ const AuthRouter = ()=> {
             <Routes>
                 <Route path="/" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
+                <Route path="/forgot" element={<ForgotPassword/>}/>
+                <Route path="/reset_password" element={<ResetPassword/>}/>
             </Routes>
         </Suspense>
      
