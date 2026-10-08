@@ -64,6 +64,38 @@ button:focus-visible {
   font-size: 13px;
 }
 
+/* Status / role badge used in tables and lists */
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #f0f0f0;
+  color: #555555;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-badge.red {
+  background: #fff0f0;
+  color: #e60000;
+}
+
+.status-badge.green {
+  background: #ecfdf3;
+  color: #067647;
+}
+
+.status-badge.blue {
+  background: #eef4ff;
+  color: #3538cd;
+}
+
+.status-badge.amber {
+  background: #fffaeb;
+  color: #b54708;
+}
+
 /* Buttons used in modal footers and page toolbars */
 .btn-primary-red,
 .btn-outline-grey,

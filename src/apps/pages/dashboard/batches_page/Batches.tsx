@@ -2,7 +2,7 @@ import CrudPage from "../../../components/common_components/crud_page/CrudPage";
 import type { CrudPageConfig } from "../../../components/common_components/crud_page/crudTypes";
 import { createBatch, deleteBatch, getAllBatches, updateBatch } from "../../api/batch/BatchApi";
 import type { Batch, BatchCreatePayload, BatchMode, BatchUpdatePayload } from "../../api/batch/BatchApi";
-import { getInstitutionOptions } from "../../api/institution/InstitutionApi";
+import { getInstitutionDropdownOptions } from "../../api/dashboard/DashboardApi";
 import { getCourseOptions } from "../../api/course/CourseApi";
 import { formatEnum, toDateInput } from "../../../utils/format";
 
@@ -18,12 +18,13 @@ const config: CrudPageConfig<Batch, BatchCreatePayload | BatchUpdatePayload> = {
   searchPlaceholder: "Search batches...",
   defaultSortBy: "id",
   list: getAllBatches,
+  institutionScoped: true,
   create: (payload) => createBatch(payload as BatchCreatePayload),
   update: updateBatch,
   remove: deleteBatch,
   lookups: {
     courses: getCourseOptions,
-    institutions: getInstitutionOptions,
+    institutions: getInstitutionDropdownOptions,
   },
   columns: [
     { key: "id", label: "ID", sortKey: "id" },
@@ -44,7 +45,7 @@ const config: CrudPageConfig<Batch, BatchCreatePayload | BatchUpdatePayload> = {
     { name: "name", label: "Batch Name", required: true },
     { name: "timing", label: "Timing", required: true, placeholder: "e.g. 9AM to 11AM" },
     // A batch's institution is fixed once created
-    { name: "institution_id", label: "Institution", type: "select", required: true, loadOptions: getInstitutionOptions, mode: "create" },
+    { name: "institution_id", label: "Institution", type: "select", required: true, loadOptions: getInstitutionDropdownOptions, mode: "create" },
     { name: "course_id", label: "Course", type: "select", required: true, loadOptions: getCourseOptions, dependsOn: "institution_id" },
     {
       name: "mode",

@@ -10,77 +10,37 @@
   font-weight: 600;
 }
 
+.dashboard-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: -8px;
+}
+
+.dashboard-toolbar:empty {
+  display: none;
+}
+
+.dashboard-institution {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 25px;
+  background: #fff0f0;
+  color: #e60000;
+  font-size: 13px;
+  font-weight: 500;
+}
+
 .dashboard-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
 }
 
-/* GROWTH CHART */
-.growth-chart {
-  display: flex;
-  align-items: flex-end;
-  gap: 24px;
-  height: 220px;
-  padding-top: 10px;
-}
-
-.growth-bar-wrapper {
-  flex: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 6px;
-}
-
-.growth-bar {
-  width: 100%;
-  max-width: 48px;
-  border-radius: 8px 8px 0 0;
-  background: #ff2e2e;
-  transition: height 0.3s ease;
-}
-
-.growth-value {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.growth-label {
-  font-size: 13px;
-  color: #777777;
-}
-
-/* RECENT */
 .dashboard-recent {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
-}
-
-.dashboard-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.dashboard-list li {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 14px;
-}
-
-.dashboard-list li:last-child {
-  border-bottom: none;
-}
-
-.dashboard-list-meta {
-  color: #888888;
-  font-size: 13px;
-  text-transform: capitalize;
 }

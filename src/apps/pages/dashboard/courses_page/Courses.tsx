@@ -2,7 +2,7 @@ import CrudPage from "../../../components/common_components/crud_page/CrudPage";
 import type { CrudPageConfig } from "../../../components/common_components/crud_page/crudTypes";
 import { createCourse, deleteCourse, getAllCourses, updateCourse } from "../../api/course/CourseApi";
 import type { Course, CourseCreatePayload, CourseUpdatePayload } from "../../api/course/CourseApi";
-import { getInstitutionOptions } from "../../api/institution/InstitutionApi";
+import { getInstitutionDropdownOptions } from "../../api/dashboard/DashboardApi";
 import { getTeacherOptions } from "../../api/teacher/TeacherApi";
 import { formatCurrency } from "../../../utils/format";
 
@@ -12,11 +12,12 @@ const config: CrudPageConfig<Course, CourseCreatePayload | CourseUpdatePayload> 
   searchPlaceholder: "Search courses...",
   defaultSortBy: "id",
   list: getAllCourses,
+  institutionScoped: true,
   create: (payload) => createCourse(payload as CourseCreatePayload),
   update: updateCourse,
   remove: deleteCourse,
   lookups: {
-    institutions: getInstitutionOptions,
+    institutions: getInstitutionDropdownOptions,
     teachers: getTeacherOptions,
   },
   columns: [
@@ -32,7 +33,7 @@ const config: CrudPageConfig<Course, CourseCreatePayload | CourseUpdatePayload> 
     { name: "duration", label: "Duration", required: true, placeholder: "e.g. 3 months" },
     { name: "course_fee", label: "Course Fee", type: "number", required: true },
     // A course's institution is fixed once created
-    { name: "institution_id", label: "Institution", type: "select", required: true, loadOptions: getInstitutionOptions, mode: "create" },
+    { name: "institution_id", label: "Institution", type: "select", required: true, loadOptions: getInstitutionDropdownOptions, mode: "create" },
     { name: "teacher_id", label: "Teacher", type: "select", required: true, loadOptions: getTeacherOptions, dependsOn: "institution_id" },
     { name: "description", label: "Description", type: "textarea", required: true },
   ],

@@ -42,7 +42,7 @@ const normalizeStudent = (student: Student): Student => {
   return Array.isArray(status) ? { ...student, payment_status: status[0] as PaymentStatus } : student;
 };
 
-// Filters: course_id, batch_id
+// Filters: institution_id (admin only; operators are scoped by the backend), course_id, batch_id
 export const getAllStudents = async (params: ListParams = {}) => {
   const response = await axiosInstance.get<PaginatedResponse<Student>>("student/get_all_students", { params });
   return { ...response.data, body: response.data.body.map(normalizeStudent) };

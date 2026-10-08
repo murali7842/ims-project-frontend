@@ -15,5 +15,14 @@ export const formatEnum = (value: unknown) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
+const dateFormatter = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", year: "numeric" });
+
+// "2026-10-08T04:55:27Z" -> "8 Oct 2026"
+export const formatDate = (value: string | null | undefined) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : dateFormatter.format(date);
+};
+
 // API dates are YYYY-MM-DD (sometimes with a time part)
 export const toDateInput = (value: string | null | undefined) => (value ? value.slice(0, 10) : "");

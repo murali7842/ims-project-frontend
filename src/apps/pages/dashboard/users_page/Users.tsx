@@ -1,14 +1,8 @@
 import CrudPage from "../../../components/common_components/crud_page/CrudPage";
 import type { CrudPageConfig } from "../../../components/common_components/crud_page/crudTypes";
+import RoleBadge from "../../../components/common_components/role_badge/RoleBadge";
 import { deleteUser, getAllUsers, updateUser } from "../../api/user/UserApi";
-import type { BackendUserRole, User, UserUpdatePayload } from "../../api/user/UserApi";
-
-const ROLE_BADGE: Record<BackendUserRole, string> = {
-  ADMIN: "red",
-  OPERATOR: "blue",
-  TEACHER: "amber",
-  STUDENT: "green",
-};
+import type { User, UserUpdatePayload } from "../../api/user/UserApi";
 
 // Users are created through registration or the operator / teacher / student
 // screens, so this page only lists, edits and deletes.
@@ -41,7 +35,7 @@ const config: CrudPageConfig<User, UserUpdatePayload> = {
       key: "role",
       label: "Role",
       sortKey: "role",
-      render: (row) => <span className={`status-badge ${ROLE_BADGE[row.role] ?? ""}`}>{row.role.toLowerCase()}</span>,
+      render: (row) => <RoleBadge role={row.role} />,
     },
     { key: "institution", label: "Institution", render: (row) => row.institution?.name ?? "-" },
   ],

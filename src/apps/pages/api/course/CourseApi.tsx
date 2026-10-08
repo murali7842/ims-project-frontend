@@ -23,6 +23,7 @@ export interface CourseCreatePayload {
 // The institution can't be changed after creation
 export type CourseUpdatePayload = Partial<Omit<CourseCreatePayload, "institution_id">>;
 
+// Filters: institution_id (admin only; operators are scoped by the backend)
 export const getAllCourses = async (params: ListParams = {}) => {
   const response = await axiosInstance.get<PaginatedResponse<Course>>("course/get_all_courses", { params });
   return response.data;

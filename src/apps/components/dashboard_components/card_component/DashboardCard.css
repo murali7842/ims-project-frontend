@@ -5,10 +5,25 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+.dashboard-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
 .dashboard-card-title {
-  margin: 0 0 16px;
+  margin: 0;
   font-size: 17px;
   font-weight: 600;
   line-height: 1.3;
   color: #000000;
+}
+
+.dashboard-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }

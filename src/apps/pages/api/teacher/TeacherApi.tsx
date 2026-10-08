@@ -20,7 +20,7 @@ export interface TeacherPayload {
   institution_id: number;
 }
 
-// Supports search, page and size only (no sorting)
+// Filters: institution_id (admin only; operators are scoped by the backend). No sorting.
 export const getAllTeachers = async (params: ListParams = {}) => {
   const response = await axiosInstance.get<PaginatedResponse<Teacher>>("teacher/get_all_teacher", { params });
   return response.data;

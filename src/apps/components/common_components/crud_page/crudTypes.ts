@@ -48,6 +48,9 @@ export interface CrudPageConfig<T extends { id: number }, P = Record<string, unk
   // id -> name lists used by `lookup` columns
   lookups?: Record<string, OptionsLoader>;
   defaultSortBy?: string;
+  // The list endpoint accepts institution_id: admins get an institution filter,
+  // operators always send their own institution
+  institutionScoped?: boolean;
   list: (params: ListParams) => Promise<PaginatedResponse<T>>;
   create?: (payload: P) => Promise<unknown>;
   update?: (id: number, payload: P) => Promise<unknown>;

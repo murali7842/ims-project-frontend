@@ -50,7 +50,12 @@ const CrudFormModal = ({ title, submitText, fields, initialValues, onSubmit, onC
       .forEach((field) => {
         field.loadOptions!()
           .then((options) => {
-            if (!cancelled) setAsyncOptions((current) => ({ ...current, [field.name]: options }));
+            if (cancelled) return;
+            setAsyncOptions((current) => ({ ...current, [field.name]: options }));
+            // Only one choice (e.g. an operator's own institution): pick it
+            if (options.length === 1 && field.required && !field.dependsOn) {
+              setValues((current) => (current[field.name] ? current : { ...current, [field.name]: options[0].value }));
+            }
           })
           .catch((error) => {
             if (!cancelled) setSubmitError(getErrorMessage(error, `Failed to load ${field.label.toLowerCase()} options`));

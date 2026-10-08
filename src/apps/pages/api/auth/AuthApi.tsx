@@ -1,6 +1,7 @@
 import { axiosLoginInstance } from "../../../../config/config";
 import { decodeToken, normalizeRole, setTokens, setUser } from "../../../utils/authStorage";
 import { getUserById } from "../user/UserApi";
+import { getDashboardInstitutions } from "../dashboard/DashboardApi";
 
 export const login = async (data: URLSearchParams) => {
   try {
@@ -42,11 +43,16 @@ export const startSession = async (accessToken: string, refreshToken?: string | 
       institution: user.institution,
     });
   } catch {
+    // Not an admin. For operators, /dashboard/institutions returns only their
+    // own institution, which scopes their lists and pre-fills their forms.
+    const institutions = await getDashboardInstitutions().catch(() => []);
+
     setUser({
       id: userId,
       name: payload?.name ?? payload?.email ?? "User",
       email: payload?.email ?? "",
       role: normalizeRole(payload?.role),
+      institution: institutions.length === 1 ? institutions[0] : null,
     });
   }
 };

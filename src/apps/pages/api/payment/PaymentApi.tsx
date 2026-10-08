@@ -20,7 +20,7 @@ export interface PaymentPayload {
   remarks: string;
 }
 
-// Filters: student_id
+// Filters: institution_id (admin only; operators are scoped by the backend), student_id
 export const getAllPayments = async (params: ListParams = {}) => {
   const response = await axiosInstance.get<PaginatedResponse<Payment>>("payment/get_all_payments", { params });
   return response.data;

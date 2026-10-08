@@ -10,7 +10,7 @@ import QuestionEditor from "./QuestionEditor";
 import { createAssessment, getAssessmentById, updateAssessment } from "../../api/assessment/AssessmentApi";
 import type { PublishStatus } from "../../api/assessment/AssessmentApi";
 import { getCourseOptions } from "../../api/course/CourseApi";
-import { getInstitutionOptions } from "../../api/institution/InstitutionApi";
+import { getInstitutionDropdownOptions } from "../../api/dashboard/DashboardApi";
 import { getErrorMessage } from "../../../utils/apiError";
 import {
   emptyAssessment,
@@ -46,7 +46,7 @@ const AssessmentEditor = () => {
     getCourseOptions()
       .then(setCourseOptions)
       .catch((err) => setError(getErrorMessage(err, "Failed to load courses")));
-    getInstitutionOptions()
+    getInstitutionDropdownOptions()
       .then(setInstitutionOptions)
       .catch(() => setInstitutionOptions(null));
   }, []);

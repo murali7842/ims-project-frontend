@@ -14,6 +14,7 @@ const config: CrudPageConfig<Payment, PaymentPayload> = {
   searchPlaceholder: "Search payments...",
   defaultSortBy: "id",
   list: getAllPayments,
+  institutionScoped: true,
   create: createPayment,
   update: updatePayment,
   remove: deletePayment,

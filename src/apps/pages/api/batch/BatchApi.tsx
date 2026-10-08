@@ -29,6 +29,7 @@ export interface BatchCreatePayload {
 // The institution can't be changed after creation
 export type BatchUpdatePayload = Partial<Omit<BatchCreatePayload, "institution_id">>;
 
+// Filters: institution_id (admin only; operators are scoped by the backend)
 export const getAllBatches = async (params: ListParams = {}) => {
   const response = await axiosInstance.get<PaginatedResponse<Batch>>("batch/get_all_batches", { params });
   return response.data;

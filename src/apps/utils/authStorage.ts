@@ -53,17 +53,37 @@ export const getRefreshToken = () => localStorage.getItem(REFRESH_TOKEN_KEY);
 
 export const isAuthenticated = () => !!getToken();
 
-export const setUser = (user: SessionUser) => {
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
+// Lets components re-render when the saved user changes (see useSessionUser)
+const userListeners = new Set<() => void>();
+let cachedUserJson: string | null = null;
+let cachedUser: SessionUser | null = null;
+
+export const subscribeUser = (listener: () => void) => {
+  userListeners.add(listener);
+  return () => {
+    userListeners.delete(listener);
+  };
 };
 
+const notifyUserChange = () => userListeners.forEach((listener) => listener());
+
+export const setUser = (user: SessionUser) => {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+  notifyUserChange();
+};
+
+// Returns the same object until the stored value changes (required by useSyncExternalStore)
 export const getUser = (): SessionUser | null => {
+  const json = localStorage.getItem(USER_KEY);
+  if (json === cachedUserJson) return cachedUser;
+
+  cachedUserJson = json;
   try {
-    const user = localStorage.getItem(USER_KEY);
-    return user ? JSON.parse(user) : null;
+    cachedUser = json ? JSON.parse(json) : null;
   } catch {
-    return null;
+    cachedUser = null;
   }
+  return cachedUser;
 };
 
 export const getUserRole = (): UserRole => getUser()?.role ?? DEFAULT_ROLE;
@@ -74,4 +94,5 @@ export const clearAuth = () => {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  notifyUserChange();
 };

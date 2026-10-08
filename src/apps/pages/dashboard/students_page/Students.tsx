@@ -20,6 +20,7 @@ const config: CrudPageConfig<Student, StudentPayload> = {
   searchPlaceholder: "Search by name, email or phone...",
   defaultSortBy: "id",
   list: getAllStudents,
+  institutionScoped: true,
   create: createStudent,
   update: updateStudent,
   remove: deleteStudent,

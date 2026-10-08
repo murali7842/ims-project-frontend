@@ -4,13 +4,43 @@ import { FiEdit2, FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
 
 import DataTable from "../data_table/DataTable";
 import ConfirmDialog from "../confirm_dialog/ConfirmDialog";
+import SelectFilter from "../select_filter/SelectFilter";
 import CrudFormModal from "./CrudFormModal";
 import { buildPayload } from "./crudTypes";
-import type { CrudPageConfig, FormOptions, FormValues } from "./crudTypes";
+import type { CrudFilter, CrudPageConfig, FormOptions, FormValues } from "./crudTypes";
 import type { TableColumn } from "../data_table/DataTable";
 import type { SelectOption } from "../form_field/FormField";
 import { usePaginatedList } from "../../../hooks/usePaginatedList";
+import { useSessionUser } from "../../../hooks/useSessionUser";
 import { getErrorMessage } from "../../../utils/apiError";
+import { getInstitutionDropdownOptions } from "../../../pages/api/dashboard/DashboardApi";
+
+const INSTITUTION_FILTER: CrudFilter = {
+  name: "institution_id",
+  label: "Institutions",
+  loadOptions: getInstitutionDropdownOptions,
+};
+
+// For `institutionScoped` lists: admins filter by any institution,
+// operators always send their own (the backend enforces this too)
+const useInstitutionScope = (config: { institutionScoped?: boolean; filters?: CrudFilter[] }) => {
+  const user = useSessionUser();
+  const isAdmin = user?.role === "admin";
+  const ownInstitutionId = user?.institution?.id;
+  const scoped = !!config.institutionScoped;
+
+  const baseParams = useMemo(
+    () => (scoped && !isAdmin && ownInstitutionId ? { institution_id: ownInstitutionId } : undefined),
+    [scoped, isAdmin, ownInstitutionId]
+  );
+
+  const filters = useMemo(
+    () => (scoped && isAdmin ? [INSTITUTION_FILTER, ...(config.filters ?? [])] : config.filters ?? []),
+    [scoped, isAdmin, config.filters]
+  );
+
+  return { baseParams, filters };
+};
 
 interface CrudPageProps<T extends { id: number }, P> {
   config: CrudPageConfig<T, P>;
@@ -49,15 +79,16 @@ const TOAST_DURATION_MS = 3000;
 
 // Generic list + search + filters + create/edit/delete screen driven by a config
 const CrudPage = <T extends { id: number }, P>({ config, onAdd, onEdit }: CrudPageProps<T, P>) => {
-  const list = usePaginatedList(config.list, { sortBy: config.defaultSortBy });
+  const { baseParams, filters } = useInstitutionScope(config);
+  const list = usePaginatedList(config.list, { sortBy: config.defaultSortBy, baseParams });
 
   const loaders = useMemo(() => {
     const result: Record<string, () => Promise<SelectOption[]>> = { ...config.lookups };
-    config.filters?.forEach((filter) => {
+    filters.forEach((filter) => {
       if (filter.loadOptions) result[`filter:${filter.name}`] = filter.loadOptions;
     });
     return result;
-  }, [config.lookups, config.filters]);
+  }, [config.lookups, filters]);
   const optionLists = useOptionLists(loaders);
 
   // `lookup` columns show the name for an id, e.g. course_id -> "Java Full Stack"
@@ -162,21 +193,15 @@ const CrudPage = <T extends { id: number }, P>({ config, onAdd, onEdit }: CrudPa
           />
         </div>
 
-        {config.filters?.map((filter) => (
-          <select
+        {filters.map((filter) => (
+          <SelectFilter
             key={filter.name}
-            className="crud-filter"
+            label={filter.label}
             value={list.filters[filter.name] ?? ""}
-            onChange={(e) => list.setFilter(filter.name, e.target.value)}
-            aria-label={filter.label}
-          >
-            <option value="">All {filter.label}</option>
-            {(filter.options ?? optionLists[`filter:${filter.name}`] ?? []).map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+            onChange={(value) => list.setFilter(filter.name, value)}
+            options={filter.options ?? optionLists[`filter:${filter.name}`] ?? []}
+            allLabel={`All ${filter.label}`}
+          />
         ))}
       </div>
 

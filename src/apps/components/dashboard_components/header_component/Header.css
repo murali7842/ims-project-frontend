@@ -11,16 +11,6 @@
   flex-shrink: 0;
 }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.header-logo {
-  height: 40px;
-}
-
 .header-icon-btn {
   position: relative;
   display: flex;

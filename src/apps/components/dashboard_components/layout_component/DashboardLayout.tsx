@@ -6,26 +6,28 @@ import Header from "../header_component/Header";
 import ErrorBoundary from "../../common_components/error_boundary/ErrorBoundary";
 import Sidebar from "../sidebar_component/Sidebar";
 import { SIDEBAR_MENU } from "../../../../config/sidebarConfig";
-import { getUserName, getUserRole } from "../../../utils/authStorage";
+import { getUserRole } from "../../../utils/authStorage";
+import { useSessionUser } from "../../../hooks/useSessionUser";
 
-// Common shell for every dashboard: header on top, role-based sidebar on the
-// left, and the active page rendered in the content area via <Outlet />.
+// Common shell for every dashboard: full height role-based sidebar on the left
+// (logo on top toggles it), header and the active page (<Outlet />) on the right.
 const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const role = getUserRole();
-  const userName = getUserName();
+  // Re-renders the header when the profile is edited
+  const userName = useSessionUser()?.name ?? "User";
 
   return (
     <div className="dashboard-layout">
-      <Header
-        userName={userName}
-        role={role}
-        onToggleSidebar={() => setCollapsed(!collapsed)}
+      <Sidebar
+        menuItems={SIDEBAR_MENU[role]}
+        collapsed={collapsed}
+        onToggle={() => setCollapsed(!collapsed)}
       />
 
-      <div className="dashboard-body">
-        <Sidebar menuItems={SIDEBAR_MENU[role]} collapsed={collapsed} />
+      <div className="dashboard-main">
+        <Header userName={userName} role={role} />
 
         <main className="dashboard-content">
           <ErrorBoundary resetKey={location.pathname}>
