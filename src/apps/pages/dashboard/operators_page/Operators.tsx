@@ -1,8 +1,9 @@
 import CrudPage from "../../../components/common_components/crud_page/CrudPage";
 import type { CrudPageConfig } from "../../../components/common_components/crud_page/crudTypes";
-import { createOperator, deleteOperator, getAllOperators, updateOperator } from "../../api/operator/OperatorApi";
+import { createOperator, deleteOperator, getAllOperators, getOperatorById, updateOperator } from "../../api/operator/OperatorApi";
 import type { Operator, OperatorPayload } from "../../api/operator/OperatorApi";
 import { getInstitutionOptions } from "../../api/institution/InstitutionApi";
+import { formatEnum } from "../../../utils/format";
 
 const config: CrudPageConfig<Operator, OperatorPayload> = {
   title: "Operators",
@@ -14,12 +15,24 @@ const config: CrudPageConfig<Operator, OperatorPayload> = {
   update: updateOperator,
   remove: deleteOperator,
   columns: [
-    { key: "id", label: "ID", sortKey: "id" },
-    { key: "name", label: "Name", sortKey: "name" },
+    { key: "name", label: "Name", sortKey: "name", link: true },
     { key: "email", label: "Email", sortKey: "email" },
     { key: "phone_number", label: "Phone" },
     { key: "institution", label: "Institution", render: (row) => row.institution?.name ?? "-" },
-    { key: "address", label: "Address" },
+  ],
+  getById: getOperatorById,
+  titleKey: "name",
+  detailSections: [
+    {
+      title: "Operator Details",
+      fields: [
+        { key: "email", label: "Email" },
+        { key: "phone_number", label: "Phone Number" },
+        { key: "role", label: "Role", render: (row) => formatEnum(row.role) },
+        { key: "institution", label: "Institution", render: (row) => row.institution?.name ?? "-" },
+        { key: "address", label: "Address", fullWidth: true },
+      ],
+    },
   ],
   fields: [
     { name: "name", label: "Name", required: true },

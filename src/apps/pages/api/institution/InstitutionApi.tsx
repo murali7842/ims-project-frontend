@@ -1,5 +1,5 @@
 import { axiosInstance } from "../../../../config/config";
-import type { ApiResponse, ListParams, PaginatedResponse } from "../../../types/api";
+import type { ApiResponse, DropDown, ListParams, PaginatedResponse } from "../../../types/api";
 
 export interface Institution {
   id: number;
@@ -7,6 +7,22 @@ export interface Institution {
   email: string;
   address: string;
   contact_number: string | null;
+}
+
+// GET /institution/{id}: institution-wide counts and each course with its batches
+export interface InstitutionDetail extends Institution {
+  total_courses: number;
+  total_batches: number;
+  total_teachers: number;
+  total_operators: number;
+  total_students: number;
+  courses: {
+    id: number;
+    name: string;
+    course_fee: number;
+    teacher: DropDown | null;
+    batches: DropDown[];
+  }[];
 }
 
 export interface InstitutionPayload {
@@ -25,7 +41,7 @@ export const getAllInstitutions = async (params: ListParams = {}) => {
 };
 
 export const getInstitutionById = async (id: number) => {
-  const response = await axiosInstance.get<ApiResponse<Institution>>(`institution/${id}`);
+  const response = await axiosInstance.get<ApiResponse<InstitutionDetail>>(`institution/${id}`);
   return response.data;
 };
 

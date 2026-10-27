@@ -12,6 +12,8 @@ import type { PublishStatus } from "../../api/assessment/AssessmentApi";
 import { getCourseOptions } from "../../api/course/CourseApi";
 import { getInstitutionDropdownOptions } from "../../api/dashboard/DashboardApi";
 import { getErrorMessage } from "../../../utils/apiError";
+import { useSessionUser } from "../../../hooks/useSessionUser";
+import { useUnsavedChangesGuard } from "../../../hooks/useUnsavedChangesGuard";
 import {
   emptyAssessment,
   emptyQuestion,
@@ -32,24 +34,34 @@ const AssessmentEditor = () => {
   const isEdit = !!assessmentId;
   const navigate = useNavigate();
 
-  const [form, setForm] = useState<AssessmentFormState>(emptyAssessment);
+  // What the exam looked like when opened; edits are compared against it
+  const [baseline, setBaseline] = useState<AssessmentFormState>(emptyAssessment);
+  const [form, setForm] = useState<AssessmentFormState>(baseline);
   // Institutions as loaded, to only send institution_ids when they changed
   const [initialInstitutionIds, setInitialInstitutionIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [courseOptions, setCourseOptions] = useState<SelectOption[]>([]);
-  // null = couldn't load (institutions API is admin only), so the section is hidden
+  // null = couldn't load, so the section is hidden
   const [institutionOptions, setInstitutionOptions] = useState<SelectOption[] | null>(null);
+  // Operators and teachers don't pick institutions: new exams are published to their own
+  const sessionUser = useSessionUser();
+  const fixedInstitutionId = sessionUser?.role !== "admin" ? sessionUser?.institution?.id : undefined;
 
   useEffect(() => {
     getCourseOptions()
       .then(setCourseOptions)
       .catch((err) => setError(getErrorMessage(err, "Failed to load courses")));
+  }, []);
+
+  // The institution picker is only shown to admins
+  useEffect(() => {
+    if (fixedInstitutionId) return;
     getInstitutionDropdownOptions()
       .then(setInstitutionOptions)
       .catch(() => setInstitutionOptions(null));
-  }, []);
+  }, [fixedInstitutionId]);
 
   useEffect(() => {
     if (!assessmentId) return;
@@ -60,6 +72,7 @@ const AssessmentEditor = () => {
         if (cancelled || !body) return;
         const state = toFormState(body);
         setForm(state);
+        setBaseline(state);
         setInitialInstitutionIds(state.institution_ids);
       })
       .catch((err) => {
@@ -116,7 +129,9 @@ const AssessmentEditor = () => {
       // when the exam already has institutions, so they're only sent when changed.
       const institutionsChanged =
         [...form.institution_ids].sort().join(",") !== [...initialInstitutionIds].sort().join(",");
-      const payload = toPayload(form, institutionOptions !== null && (!isEdit || institutionsChanged));
+      const payload = fixedInstitutionId
+        ? toPayload({ ...form, institution_ids: [fixedInstitutionId] }, !isEdit)
+        : toPayload(form, institutionOptions !== null && (!isEdit || institutionsChanged));
       if (isEdit) {
         await updateAssessment(Number(assessmentId), payload);
       } else {
@@ -129,6 +144,10 @@ const AssessmentEditor = () => {
     }
   };
 
+  const isDirty = JSON.stringify(form) !== JSON.stringify(baseline);
+  const { confirmLeave, discardDialog } = useUnsavedChangesGuard(isDirty && !saving);
+  const goBack = () => confirmLeave(() => navigate("/dashboard/exams"));
+
   if (loading) {
     return <p>Loading exam...</p>;
   }
@@ -139,13 +158,13 @@ const AssessmentEditor = () => {
       {/* HEADER */}
       <div className="editor-header">
         <div className="editor-title">
-          <button className="icon-btn" onClick={() => navigate("/dashboard/exams")} aria-label="Back to exams">
+          <button className="icon-btn" onClick={goBack} aria-label="Back to exams">
             <FiArrowLeft />
           </button>
           <h2>{isEdit ? "Edit Exam" : "New Exam"}</h2>
         </div>
         <div className="editor-actions">
-          <button className="btn-outline-grey" onClick={() => navigate("/dashboard/exams")} disabled={saving}>
+          <button className="btn-outline-grey" onClick={goBack} disabled={saving}>
             Cancel
           </button>
           <button className="btn-primary-red" onClick={handleSave} disabled={saving}>
@@ -188,7 +207,7 @@ const AssessmentEditor = () => {
           </div>
         </div>
 
-        {institutionOptions && institutionOptions.length > 0 && (
+        {!fixedInstitutionId && institutionOptions && institutionOptions.length > 0 && (
           <div className="institution-picker">
             <span className="question-hint">Publish to institutions</span>
             <div className="institution-list">
@@ -255,6 +274,7 @@ const AssessmentEditor = () => {
       >
         <FiPlus /> Add section
       </button>
+      {discardDialog}
     </div>
   );
 };

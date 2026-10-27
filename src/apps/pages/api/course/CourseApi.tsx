@@ -1,5 +1,6 @@
 import { axiosInstance } from "../../../../config/config";
-import type { ApiResponse, ListParams, PaginatedResponse } from "../../../types/api";
+import type { ApiResponse, DropDown, ListParams, PaginatedResponse } from "../../../types/api";
+import type { BatchMode } from "../batch/BatchApi";
 
 export interface Course {
   id: number;
@@ -9,6 +10,29 @@ export interface Course {
   course_fee: number;
   institution_id: number | null;
   teacher_id: number;
+}
+
+// GET /course/{id}: related records as { id, name } plus the course's batches
+export interface CourseDetail {
+  id: number;
+  name: string;
+  description: string | null;
+  duration: string | null;
+  course_fee: number;
+  institution: DropDown | null;
+  teacher: DropDown | null;
+  total_batches: number;
+  total_students: number;
+  batches: {
+    id: number;
+    name: string;
+    timing: string;
+    mode: BatchMode;
+    start_date: string;
+    end_date: string;
+    student_limit: number;
+    total_students: number;
+  }[];
 }
 
 export interface CourseCreatePayload {
@@ -30,7 +54,7 @@ export const getAllCourses = async (params: ListParams = {}) => {
 };
 
 export const getCourseById = async (id: number) => {
-  const response = await axiosInstance.get<ApiResponse<Course>>(`course/${id}`);
+  const response = await axiosInstance.get<ApiResponse<CourseDetail>>(`course/${id}`);
   return response.data;
 };
 

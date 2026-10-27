@@ -81,7 +81,6 @@ const Login = () => {
               value={email}
               onChange={setEmail}
               icon={emailIcon}
-              isActive={true}
             />
 
             {/* PASSWORD INPUT */}

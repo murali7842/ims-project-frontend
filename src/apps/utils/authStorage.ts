@@ -18,11 +18,14 @@ export interface SessionUser {
   institution?: InstitutionDropDown | null;
 }
 
+// Claims in the access token. role / name / institution are read when the backend adds them.
 interface TokenPayload {
   sub?: string;
   email?: string;
   name?: string;
   role?: string;
+  institution_id?: number | null;
+  institution_name?: string | null;
 }
 
 export const decodeToken = (token: string): TokenPayload | null => {

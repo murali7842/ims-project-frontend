@@ -89,7 +89,6 @@ const RegisterLayout = () => {
             value={userName}
             onChange={setUserName}
             icon={userIcon}
-            isActive={true}
           />
           <LoginInput
             label="Email"
@@ -98,7 +97,6 @@ const RegisterLayout = () => {
             value={email}
             onChange={setEmail}
             icon={emailIcon}
-            isActive={true}
           />
           <LoginInput
             label="Phone Number"
@@ -107,7 +105,6 @@ const RegisterLayout = () => {
             value={phoneNumber}
             onChange={setPhoneNumber}
             icon={userIcon}
-            isActive={true}
           />
 
           <LoginInput
@@ -117,7 +114,6 @@ const RegisterLayout = () => {
             value={address}
             onChange={setAddress}
             icon={userIcon}
-            isActive={true}
           />
           <LoginInput
             label="Password"

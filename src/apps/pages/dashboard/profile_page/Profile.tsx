@@ -13,6 +13,7 @@ import type { BackendUserRole, User, UserUpdatePayload } from "../../api/user/Us
 import { normalizeRole, setUser } from "../../../utils/authStorage";
 import type { SessionUser } from "../../../utils/authStorage";
 import { getErrorMessage } from "../../../utils/apiError";
+import { useUnsavedChangesGuard } from "../../../hooks/useUnsavedChangesGuard";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -47,6 +48,9 @@ const ProfileForm = ({ user, onSaved, onCancel }: ProfileFormProps) => {
   const [errors, setErrors] = useState<Partial<Record<keyof UserUpdatePayload, string>>>({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  const isDirty = FIELDS.some((field) => values[field.name].trim() !== (user[field.name] ?? "").trim());
+  const { confirmLeave, discardDialog } = useUnsavedChangesGuard(isDirty);
 
   const handleChange = (name: string, value: string) => {
     setValues((current) => ({ ...current, [name]: value }));
@@ -105,13 +109,14 @@ const ProfileForm = ({ user, onSaved, onCancel }: ProfileFormProps) => {
       {error && <p className="form-error-banner">{error}</p>}
 
       <div className="profile-form-actions">
-        <button type="button" className="btn-outline-grey" onClick={onCancel} disabled={saving}>
+        <button type="button" className="btn-outline-grey" onClick={() => confirmLeave(onCancel)} disabled={saving}>
           Cancel
         </button>
         <button type="submit" className="btn-primary-red" disabled={saving}>
           {saving ? "Saving..." : "Save changes"}
         </button>
       </div>
+      {discardDialog}
     </form>
   );
 };

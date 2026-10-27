@@ -64,6 +64,30 @@ button:focus-visible {
   font-size: 13px;
 }
 
+/* Clickable record name (list cells, related records): normal text, red on hover (no underline) */
+.crud-link {
+  display: inline;
+  padding: 0;
+  text-decoration: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.crud-link:hover,
+.crud-link:focus-visible {
+  border: none;
+  color: #e60000;
+  text-decoration: none;
+  outline: none;
+}
+
 /* Status / role badge used in tables and lists */
 .status-badge {
   display: inline-block;

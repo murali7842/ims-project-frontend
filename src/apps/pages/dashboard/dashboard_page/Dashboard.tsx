@@ -13,6 +13,7 @@ import type { SummaryKey } from "./widgets/SummaryCards";
 import UsersByRoleCard from "./widgets/UsersByRoleCard";
 import RecentInstitutionsCard from "./widgets/RecentInstitutionsCard";
 import RecentUsersCard from "./widgets/RecentUsersCard";
+import TeacherOverview from "./widgets/TeacherOverview";
 
 interface OverviewConfig {
   // Admin picks an institution (or all); operators are scoped by the backend
@@ -74,7 +75,8 @@ const DashboardOverview = ({ config }: { config: OverviewConfig }) => {
 };
 
 const Dashboard = () => {
-  const config = OVERVIEW_CONFIG[getUserRole()];
+  const role = getUserRole();
+  const config = OVERVIEW_CONFIG[role];
 
   return (
     <div className="dashboard-page">
@@ -82,6 +84,8 @@ const Dashboard = () => {
 
       {config ? (
         <DashboardOverview config={config} />
+      ) : role === "teacher" ? (
+        <TeacherOverview />
       ) : (
         // Dashboard APIs are admin / operator only
         <DashboardCard title="Overview">

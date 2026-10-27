@@ -4,6 +4,7 @@ interface ConfirmDialogProps {
   title: string;
   message: string;
   confirmText?: string;
+  cancelText?: string;
   loading?: boolean;
   error?: string;
   onConfirm: () => void;
@@ -14,6 +15,7 @@ const ConfirmDialog = ({
   title,
   message,
   confirmText = "Delete",
+  cancelText = "Cancel",
   loading = false,
   error,
   onConfirm,
@@ -26,10 +28,10 @@ const ConfirmDialog = ({
       width={420}
       footer={
         <>
-          <button className="btn-outline-grey" onClick={onCancel} disabled={loading}>
-            Cancel
+          <button type="button" className="btn-outline-grey" onClick={onCancel} disabled={loading}>
+            {cancelText}
           </button>
-          <button className="btn-danger-red" onClick={onConfirm} disabled={loading}>
+          <button type="button" className="btn-danger-red" onClick={onConfirm} disabled={loading}>
             {loading ? "Please wait..." : confirmText}
           </button>
         </>

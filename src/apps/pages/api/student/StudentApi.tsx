@@ -1,5 +1,5 @@
 import { axiosInstance } from "../../../../config/config";
-import type { ApiResponse, ListParams, PaginatedResponse } from "../../../types/api";
+import type { ApiResponse, DropDown, ListParams, PaginatedResponse } from "../../../types/api";
 
 export type StudentStatus = "ACTIVE" | "INACTIVE";
 export type PaymentStatus = "PAID" | "UNPAID" | "PARTIALLY_PAID";
@@ -22,6 +22,13 @@ export interface Student {
   batch_id: number;
 }
 
+// GET /student/{id}: related records as { id, name } instead of ids
+export interface StudentDetail extends Omit<Student, "institution_id" | "course_id" | "batch_id"> {
+  institution: DropDown | null;
+  course: DropDown | null;
+  batch: DropDown | null;
+}
+
 export interface StudentPayload {
   name: string;
   email: string;
@@ -37,7 +44,7 @@ export interface StudentPayload {
 
 // The backend's PaymentStatus enum has trailing commas (PAID = "PAID",), so PAID and
 // UNPAID come back as ["PAID"] / ["UNPAID"]. Unwrap them until the backend is fixed.
-const normalizeStudent = (student: Student): Student => {
+const normalizeStudent = <S extends { payment_status: PaymentStatus }>(student: S): S => {
   const status: unknown = student.payment_status;
   return Array.isArray(status) ? { ...student, payment_status: status[0] as PaymentStatus } : student;
 };
@@ -49,7 +56,7 @@ export const getAllStudents = async (params: ListParams = {}) => {
 };
 
 export const getStudentById = async (id: number) => {
-  const response = await axiosInstance.get<ApiResponse<Student>>(`student/${id}`);
+  const response = await axiosInstance.get<ApiResponse<StudentDetail>>(`student/${id}`);
   const { body } = response.data;
   return { ...response.data, body: body ? normalizeStudent(body) : body };
 };

@@ -1,7 +1,10 @@
 import CrudPage from "../../../components/common_components/crud_page/CrudPage";
 import type { CrudPageConfig } from "../../../components/common_components/crud_page/crudTypes";
-import { createBatch, deleteBatch, getAllBatches, updateBatch } from "../../api/batch/BatchApi";
-import type { Batch, BatchCreatePayload, BatchMode, BatchUpdatePayload } from "../../api/batch/BatchApi";
+import { createBatch, deleteBatch, getAllBatches, getBatchById, updateBatch } from "../../api/batch/BatchApi";
+import type { Batch, BatchCreatePayload, BatchDetail, BatchMode, BatchUpdatePayload } from "../../api/batch/BatchApi";
+import { FiUserPlus, FiUsers, FiGrid } from "react-icons/fi";
+import EntityLink from "../../../components/common_components/entity_link/EntityLink";
+import BatchStudents from "./BatchStudents";
 import { getInstitutionDropdownOptions } from "../../api/dashboard/DashboardApi";
 import { getCourseOptions } from "../../api/course/CourseApi";
 import { formatEnum, toDateInput } from "../../../utils/format";
@@ -12,7 +15,11 @@ const MODE_BADGE: Record<BatchMode, string> = {
   HYBRID: "green",
 };
 
-const config: CrudPageConfig<Batch, BatchCreatePayload | BatchUpdatePayload> = {
+const modeBadge = (row: { mode: BatchMode }) => (
+  <span className={`status-badge ${MODE_BADGE[row.mode] ?? ""}`}>{formatEnum(row.mode)}</span>
+);
+
+const config: CrudPageConfig<Batch, BatchCreatePayload | BatchUpdatePayload, BatchDetail> = {
   title: "Batches",
   entityName: "Batch",
   searchPlaceholder: "Search batches...",
@@ -27,20 +34,45 @@ const config: CrudPageConfig<Batch, BatchCreatePayload | BatchUpdatePayload> = {
     institutions: getInstitutionDropdownOptions,
   },
   columns: [
-    { key: "id", label: "ID", sortKey: "id" },
-    { key: "name", label: "Name", sortKey: "name" },
+    { key: "name", label: "Name", sortKey: "name", link: true },
     { key: "course_id", label: "Course", lookup: "courses" },
     { key: "timing", label: "Timing" },
-    {
-      key: "mode",
-      label: "Mode",
-      render: (row) => <span className={`status-badge ${MODE_BADGE[row.mode] ?? ""}`}>{formatEnum(row.mode)}</span>,
-    },
+    { key: "mode", label: "Mode", render: modeBadge },
     { key: "start_date", label: "Start Date", sortKey: "start_date" },
-    { key: "end_date", label: "End Date", sortKey: "end_date" },
-    { key: "student_limit", label: "Student Limit", sortKey: "student_limit" },
     { key: "institution_id", label: "Institution", lookup: "institutions" },
   ],
+  getById: getBatchById,
+  titleKey: "name",
+  // Edit form uses ids; the detail has { id, name } objects
+  detailToRow: (batch) => ({
+    ...batch,
+    course_id: batch.course?.id ?? 0,
+    institution_id: batch.institution?.id ?? 0,
+  }),
+  detailStats: (batch) => [
+    { label: "Students Enrolled", value: batch.total_students, icon: FiUsers },
+    { label: "Seats Available", value: batch.available_seats, icon: FiUserPlus },
+    { label: "Student Limit", value: batch.student_limit, icon: FiGrid },
+  ],
+  detailSections: [
+    {
+      title: "Batch Details",
+      fields: [
+        { key: "course", label: "Course", render: (batch) => <EntityLink module="courses" item={batch.course} /> },
+        { key: "institution", label: "Institution", render: (batch) => <EntityLink module="institutions" item={batch.institution} /> },
+        { key: "mode", label: "Mode", render: modeBadge },
+        { key: "timing", label: "Timing" },
+      ],
+    },
+    {
+      title: "Schedule",
+      fields: [
+        { key: "start_date", label: "Start Date" },
+        { key: "end_date", label: "End Date" },
+      ],
+    },
+  ],
+  detailExtra: (batch) => <BatchStudents batchId={batch.id} />,
   fields: [
     { name: "name", label: "Batch Name", required: true },
     { name: "timing", label: "Timing", required: true, placeholder: "e.g. 9AM to 11AM" },

@@ -35,3 +35,9 @@ export interface InstitutionDropDown {
   id: number;
   name: string;
 }
+
+// { id, name } reference to a related record (course, batch, teacher, ...)
+export interface DropDown {
+  id: number;
+  name: string;
+}

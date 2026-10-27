@@ -25,6 +25,8 @@ interface DataTableProps<T> {
   totalPages: number;
   totalElements: number;
   onPageChange: (page: number) => void;
+  // Search / filters shown in the top row of the card, with the record count on the right
+  toolbar?: ReactNode;
 }
 
 const DataTable = <T,>({
@@ -41,11 +43,21 @@ const DataTable = <T,>({
   totalPages,
   totalElements,
   onPageChange,
+  toolbar,
 }: DataTableProps<T>) => {
   const columnCount = columns.length + (actions ? 1 : 0);
 
   return (
     <div className="data-table">
+      {toolbar && (
+        <div className="data-table-toolbar">
+          {toolbar}
+          <span className="data-table-count">
+            {totalElements} record{totalElements === 1 ? "" : "s"}
+          </span>
+        </div>
+      )}
+
       <div className="data-table-scroll">
         <table>
           <thead>
@@ -95,7 +107,7 @@ const DataTable = <T,>({
 
       {/* PAGINATION */}
       <div className="data-table-footer">
-        <span>{totalElements} record{totalElements === 1 ? "" : "s"}</span>
+        <span>{toolbar ? "" : `${totalElements} record${totalElements === 1 ? "" : "s"}`}</span>
         <div className="data-table-pager">
           <button disabled={page <= 1 || loading} onClick={() => onPageChange(page - 1)} aria-label="Previous page">
             <FiChevronLeft />

@@ -1,6 +1,8 @@
 import { axiosInstance } from "../../../../config/config";
-import type { ApiResponse, InstitutionDropDown } from "../../../types/api";
+import type { ApiResponse, DropDown, InstitutionDropDown } from "../../../types/api";
 import type { BackendUserRole } from "../user/UserApi";
+import type { BatchMode } from "../batch/BatchApi";
+import type { PublishStatus } from "../assessment/AssessmentApi";
 
 // All dashboard endpoints accept institution_id for admins (omit = all institutions).
 // For operators the backend ignores it and always uses their own institution.
@@ -71,3 +73,32 @@ export const getRecentInstitutions = (filter: DashboardFilter = {}, limit = 5) =
 
 export const getRecentUsers = (filter: DashboardFilter = {}, limit = 5) =>
   getBody<RecentUser[]>("dashboard/recent_users", { ...filter, limit });
+
+export interface TeacherDashboard {
+  total_courses: number;
+  total_batches: number;
+  total_students: number;
+  upcoming_exams: number;
+  batches: {
+    id: number;
+    name: string;
+    course: DropDown | null;
+    timing: string;
+    mode: BatchMode;
+    start_date: string;
+    end_date: string;
+    student_limit: number;
+    total_students: number;
+  }[];
+  recent_exams: {
+    id: number;
+    title: string;
+    status: PublishStatus;
+    start_date: string | null;
+    end_date: string | null;
+    course: DropDown | null;
+  }[];
+}
+
+// Teacher only: counts, the teacher's batches and recent exams for their courses
+export const getTeacherDashboard = () => getBody<TeacherDashboard>("dashboard/teacher");
