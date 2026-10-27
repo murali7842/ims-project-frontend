@@ -1,5 +1,5 @@
 import { axiosInstance } from "../../../../config/config";
-import type { ApiResponse, InstitutionDropDown, ListParams, PaginatedResponse } from "../../../types/api";
+import type { ApiResponse, DropDown, InstitutionDropDown, ListParams, PaginatedResponse } from "../../../types/api";
 
 export interface Teacher {
   id: number;
@@ -11,6 +11,13 @@ export interface Teacher {
   institution: InstitutionDropDown | null;
 }
 
+// GET /teacher/{id}: courses taught and their batches
+export interface TeacherDetail extends Teacher {
+  total_courses: number;
+  total_batches: number;
+  courses: { id: number; name: string; total_batches: number; batches: DropDown[] }[];
+}
+
 export interface TeacherPayload {
   name: string;
   email: string;
@@ -20,14 +27,14 @@ export interface TeacherPayload {
   institution_id: number;
 }
 
-// Supports search, page and size only (no sorting)
+// Filters: institution_id (admin only; operators are scoped by the backend). No sorting.
 export const getAllTeachers = async (params: ListParams = {}) => {
   const response = await axiosInstance.get<PaginatedResponse<Teacher>>("teacher/get_all_teacher", { params });
   return response.data;
 };
 
 export const getTeacherById = async (id: number) => {
-  const response = await axiosInstance.get<ApiResponse<Teacher>>(`teacher/${id}`);
+  const response = await axiosInstance.get<ApiResponse<TeacherDetail>>(`teacher/${id}`);
   return response.data;
 };
 

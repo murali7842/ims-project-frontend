@@ -101,7 +101,6 @@ const ForgotPassword = () => {
               value={email}
               onChange={setEmail}
               icon={emailIcon}
-              isActive={true}
             />
 
             <div className="extra-options">

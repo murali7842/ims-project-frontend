@@ -1,61 +1,91 @@
 import CrudPage from "../../../components/common_components/crud_page/CrudPage";
 import { findOption } from "../../../components/common_components/crud_page/crudTypes";
 import type { CrudPageConfig } from "../../../components/common_components/crud_page/crudTypes";
-import { createStudent, deleteStudent, getAllStudents, updateStudent } from "../../api/student/StudentApi";
-import type { PaymentStatus, Student, StudentPayload, StudentStatus } from "../../api/student/StudentApi";
+import { createStudent, deleteStudent, getAllStudents, getStudentById, updateStudent } from "../../api/student/StudentApi";
+import type { Student, StudentDetail, StudentPayload, StudentStatus } from "../../api/student/StudentApi";
+import EntityLink from "../../../components/common_components/entity_link/EntityLink";
+import { paymentBadge, statusBadge } from "./studentBadges";
 import { getCourseOptions } from "../../api/course/CourseApi";
 import { getBatchOptions } from "../../api/batch/BatchApi";
-import { formatCurrency, formatEnum } from "../../../utils/format";
-
-const PAYMENT_BADGE: Record<PaymentStatus, string> = {
-  PAID: "green",
-  PARTIALLY_PAID: "amber",
-  UNPAID: "red",
-};
+import { getInstitutionDropdownOptions } from "../../api/dashboard/DashboardApi";
+import StudentPayments from "./StudentPayments";
+import { getUserRole } from "../../../utils/authStorage";
+import { formatCurrency } from "../../../utils/format";
 
 // Fee, paid and balance amounts are calculated by the backend from the course fee and payments
-const config: CrudPageConfig<Student, StudentPayload> = {
+const config: CrudPageConfig<Student, StudentPayload, StudentDetail> = {
   title: "Students",
   entityName: "Student",
   searchPlaceholder: "Search by name, email or phone...",
   defaultSortBy: "id",
   list: getAllStudents,
+  institutionScoped: true,
   create: createStudent,
   update: updateStudent,
   remove: deleteStudent,
   lookups: {
     courses: getCourseOptions,
     batches: getBatchOptions,
+    institutions: getInstitutionDropdownOptions,
   },
   filters: [
     { name: "course_id", label: "Courses", loadOptions: getCourseOptions },
     { name: "batch_id", label: "Batches", loadOptions: getBatchOptions },
   ],
   columns: [
-    { key: "id", label: "ID", sortKey: "id" },
-    { key: "name", label: "Name", sortKey: "name" },
-    { key: "email", label: "Email", sortKey: "email" },
-    { key: "phone_number", label: "Phone" },
+    { key: "name", label: "Name", sortKey: "name", link: true },
     { key: "course_id", label: "Course", lookup: "courses" },
     { key: "batch_id", label: "Batch", lookup: "batches" },
-    { key: "fee_amount", label: "Fee", render: (row) => formatCurrency(row.fee_amount) },
-    { key: "paid_amount", label: "Paid", render: (row) => formatCurrency(row.paid_amount) },
     { key: "balance_amount", label: "Balance", sortKey: "balance_amount", render: (row) => formatCurrency(row.balance_amount) },
+    { key: "payment_status", label: "Payment", render: paymentBadge },
+    { key: "status", label: "Status", render: statusBadge },
+  ],
+  getById: getStudentById,
+  // Edit form uses ids; the detail has { id, name } objects
+  detailToRow: ({ course, batch, institution, ...student }) => ({
+    ...student,
+    course_id: course?.id ?? 0,
+    batch_id: batch?.id ?? 0,
+    institution_id: institution?.id ?? 0,
+  }),
+  titleKey: "name",
+  detailSections: [
     {
-      key: "payment_status",
-      label: "Payment",
-      render: (row) => (
-        <span className={`status-badge ${PAYMENT_BADGE[row.payment_status] ?? ""}`}>{formatEnum(row.payment_status)}</span>
-      ),
+      title: "Personal Details",
+      fields: [
+        { key: "email", label: "Email" },
+        { key: "phone_number", label: "Phone Number" },
+        { key: "status", label: "Status", render: statusBadge },
+        { key: "address", label: "Address", fullWidth: true },
+      ],
     },
     {
-      key: "status",
-      label: "Status",
-      render: (row) => (
-        <span className={`status-badge ${row.status === "ACTIVE" ? "green" : ""}`}>{formatEnum(row.status)}</span>
-      ),
+      title: "Guardian",
+      fields: [
+        { key: "guardian_name", label: "Guardian Name" },
+        { key: "guardian_phone", label: "Guardian Phone" },
+      ],
+    },
+    {
+      title: "Enrollment",
+      fields: [
+        { key: "course", label: "Course", render: (student) => <EntityLink module="courses" item={student.course} /> },
+        { key: "batch", label: "Batch", render: (student) => <EntityLink module="batches" item={student.batch} /> },
+        { key: "institution", label: "Institution", render: (student) => <EntityLink module="institutions" item={student.institution} /> },
+      ],
+    },
+    {
+      title: "Fees",
+      fields: [
+        { key: "fee_amount", label: "Course Fee", render: (row) => formatCurrency(row.fee_amount) },
+        { key: "paid_amount", label: "Paid", render: (row) => formatCurrency(row.paid_amount) },
+        { key: "balance_amount", label: "Balance", render: (row) => formatCurrency(row.balance_amount) },
+        { key: "payment_status", label: "Payment Status", render: paymentBadge },
+      ],
     },
   ],
+  // Payments API is admin / operator only; teachers still see the fee totals above
+  detailExtra: (student) => (getUserRole() === "teacher" ? null : <StudentPayments studentId={student.id} />),
   fields: [
     { name: "name", label: "Name", required: true },
     { name: "email", label: "Email", type: "email", required: true },

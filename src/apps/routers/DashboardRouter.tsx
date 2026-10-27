@@ -8,6 +8,7 @@ import { getUserRole } from '../utils/authStorage.ts';
 
 const Dashboard = React.lazy(() => import('../pages/dashboard/dashboard_page/Dashboard.tsx'));
 const ModulePage = React.lazy(() => import('../pages/dashboard/module_page/ModulePage.tsx'));
+const Profile = React.lazy(() => import('../pages/dashboard/profile_page/Profile.tsx'));
 
 // Register real module pages here as they are built, keyed by sidebar path.
 // Any sidebar item without an entry falls back to ModulePage.
@@ -36,6 +37,8 @@ const DashboardRouter = ()=> {
                 <Route element={<ProtectedRoute/>}>
                     <Route element={<DashboardLayout/>}>
                         <Route index element={<Dashboard/>}/>
+                        {/* Every role, opened from the header profile menu */}
+                        <Route path="profile" element={<Profile/>}/>
                         {modules.map(({ path, label }) => {
                             const Page = MODULE_PAGES[path];
                             return (

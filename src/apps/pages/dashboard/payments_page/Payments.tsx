@@ -1,6 +1,6 @@
 import CrudPage from "../../../components/common_components/crud_page/CrudPage";
 import type { CrudPageConfig } from "../../../components/common_components/crud_page/crudTypes";
-import { createPayment, deletePayment, getAllPayments, updatePayment } from "../../api/payment/PaymentApi";
+import { createPayment, deletePayment, getAllPayments, getPaymentById, updatePayment } from "../../api/payment/PaymentApi";
 import type { Payment, PaymentPayload } from "../../api/payment/PaymentApi";
 import { getStudentOptions } from "../../api/student/StudentApi";
 import { formatCurrency, formatEnum, toDateInput } from "../../../utils/format";
@@ -14,6 +14,7 @@ const config: CrudPageConfig<Payment, PaymentPayload> = {
   searchPlaceholder: "Search payments...",
   defaultSortBy: "id",
   list: getAllPayments,
+  institutionScoped: true,
   create: createPayment,
   update: updatePayment,
   remove: deletePayment,
@@ -22,12 +23,23 @@ const config: CrudPageConfig<Payment, PaymentPayload> = {
   },
   filters: [{ name: "student_id", label: "Students", loadOptions: getStudentOptions }],
   columns: [
-    { key: "id", label: "ID", sortKey: "id" },
-    { key: "student_id", label: "Student", lookup: "students" },
+    { key: "student_id", label: "Student", lookup: "students", link: true },
     { key: "amount_paid", label: "Amount", sortKey: "amount_paid", render: (row) => formatCurrency(row.amount_paid) },
     { key: "payment_date", label: "Date", sortKey: "payment_date", render: (row) => toDateInput(row.payment_date) || "-" },
     { key: "payment_mode", label: "Mode", render: (row) => formatEnum(row.payment_mode) },
-    { key: "remarks", label: "Remarks" },
+  ],
+  getById: getPaymentById,
+  detailSections: [
+    {
+      title: "Payment Details",
+      fields: [
+        { key: "student_id", label: "Student", lookup: "students" },
+        { key: "amount_paid", label: "Amount", render: (row) => formatCurrency(row.amount_paid) },
+        { key: "payment_date", label: "Payment Date", render: (row) => toDateInput(row.payment_date) || "-" },
+        { key: "payment_mode", label: "Payment Mode", render: (row) => formatEnum(row.payment_mode) },
+        { key: "remarks", label: "Remarks", fullWidth: true },
+      ],
+    },
   ],
   fields: [
     { name: "student_id", label: "Student", type: "select", required: true, loadOptions: getStudentOptions, fullWidth: true },

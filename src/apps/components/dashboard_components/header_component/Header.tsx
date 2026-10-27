@@ -1,21 +1,31 @@
 import './Header.css';
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiBell, FiChevronDown, FiLogOut, FiMenu, FiSearch } from "react-icons/fi";
+import { FiBell, FiChevronDown, FiLogOut, FiSearch, FiUser } from "react-icons/fi";
 
-import logo from "../../../../assets/auth_images/ims_logo.png";
 import { clearAuth } from "../../../utils/authStorage";
 
 interface HeaderProps {
   userName: string;
   role: string;
-  onToggleSidebar: () => void;
 }
 
-const Header = ({ userName, role, onToggleSidebar }: HeaderProps) => {
+// The logo lives in the sidebar (clicking it toggles the sidebar)
+const Header = ({ userName, role }: HeaderProps) => {
   const [search, setSearch] = useState("");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+
+  // Close the menu on a click outside it
+  useEffect(() => {
+    if (!showProfileMenu) return;
+    const handleClick = (event: MouseEvent) => {
+      if (!profileRef.current?.contains(event.target as Node)) setShowProfileMenu(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [showProfileMenu]);
 
   const handleLogout = () => {
     clearAuth();
@@ -24,14 +34,6 @@ const Header = ({ userName, role, onToggleSidebar }: HeaderProps) => {
 
   return (
     <header className="dashboard-header">
-
-      {/* LOGO */}
-      <div className="header-left">
-        <button className="header-icon-btn" onClick={onToggleSidebar} aria-label="Toggle sidebar">
-          <FiMenu />
-        </button>
-        <img src={logo} alt="IMS Logo" className="header-logo" />
-      </div>
 
       {/* SEARCH */}
       <div className="header-search">
@@ -51,7 +53,7 @@ const Header = ({ userName, role, onToggleSidebar }: HeaderProps) => {
           <span className="notification-dot" />
         </button>
 
-        <div className="header-profile" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+        <div ref={profileRef} className="header-profile" onClick={() => setShowProfileMenu(!showProfileMenu)}>
           <div className="profile-avatar">{userName.charAt(0).toUpperCase()}</div>
           <div className="profile-info">
             <span className="profile-name">{userName}</span>
@@ -63,6 +65,9 @@ const Header = ({ userName, role, onToggleSidebar }: HeaderProps) => {
             <div className="profile-menu">
               <button onClick={handleLogout}>
                 <FiLogOut /> Logout
+              </button>
+              <button onClick={() => navigate("/dashboard/profile")}>
+                <FiUser /> My Profile
               </button>
             </div>
           )}

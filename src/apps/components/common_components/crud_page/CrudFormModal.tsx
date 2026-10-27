@@ -6,6 +6,7 @@ import FormField from "../form_field/FormField";
 import type { SelectOption } from "../form_field/FormField";
 import type { CrudField, FormOptions, FormValues } from "./crudTypes";
 import { getErrorMessage } from "../../../utils/apiError";
+import { useUnsavedChangesGuard } from "../../../hooks/useUnsavedChangesGuard";
 
 interface CrudFormModalProps {
   title: string;
@@ -37,6 +38,8 @@ const validate = (fields: CrudField[], values: FormValues) => {
 
 const CrudFormModal = ({ title, submitText, fields, initialValues, onSubmit, onClose }: CrudFormModalProps) => {
   const [values, setValues] = useState<FormValues>(initialValues);
+  // Values the form started with (plus auto-selected options); edits are compared against it
+  const [baseline, setBaseline] = useState<FormValues>(initialValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -50,7 +53,16 @@ const CrudFormModal = ({ title, submitText, fields, initialValues, onSubmit, onC
       .forEach((field) => {
         field.loadOptions!()
           .then((options) => {
-            if (!cancelled) setAsyncOptions((current) => ({ ...current, [field.name]: options }));
+            if (cancelled) return;
+            setAsyncOptions((current) => ({ ...current, [field.name]: options }));
+            // Only one choice (e.g. an operator's own institution): pick it
+            if (options.length === 1 && field.required && !field.dependsOn) {
+              const pick = (current: FormValues) =>
+                current[field.name] ? current : { ...current, [field.name]: options[0].value };
+              setValues(pick);
+              // Not a user edit, so it doesn't count as an unsaved change
+              setBaseline(pick);
+            }
           })
           .catch((error) => {
             if (!cancelled) setSubmitError(getErrorMessage(error, `Failed to load ${field.label.toLowerCase()} options`));
@@ -61,6 +73,16 @@ const CrudFormModal = ({ title, submitText, fields, initialValues, onSubmit, onC
       cancelled = true;
     };
   }, [fields]);
+
+  const isDirty = fields.some(
+    (field) => (values[field.name] ?? "").trim() !== (baseline[field.name] ?? "").trim()
+  );
+  const { confirmLeave, discardDialog } = useUnsavedChangesGuard(isDirty);
+
+  // ✕, Cancel and Escape: ask before throwing away edits
+  const requestClose = () => {
+    if (!saving) confirmLeave(onClose);
+  };
 
   const fieldNames = new Set(fields.map((field) => field.name));
 
@@ -105,10 +127,10 @@ const CrudFormModal = ({ title, submitText, fields, initialValues, onSubmit, onC
   return (
     <Modal
       title={title}
-      onClose={onClose}
+      onClose={requestClose}
       footer={
         <>
-          <button className="btn-outline-grey" onClick={onClose} disabled={saving}>
+          <button className="btn-outline-grey" onClick={requestClose} disabled={saving}>
             Cancel
           </button>
           <button className="btn-primary-red" onClick={() => handleSubmit()} disabled={saving}>
@@ -139,6 +161,7 @@ const CrudFormModal = ({ title, submitText, fields, initialValues, onSubmit, onC
       </form>
 
       {submitError && <p className="form-error-banner">{submitError}</p>}
+      {discardDialog}
     </Modal>
   );
 };

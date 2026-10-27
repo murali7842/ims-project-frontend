@@ -1,14 +1,8 @@
 import CrudPage from "../../../components/common_components/crud_page/CrudPage";
 import type { CrudPageConfig } from "../../../components/common_components/crud_page/crudTypes";
-import { deleteUser, getAllUsers, updateUser } from "../../api/user/UserApi";
-import type { BackendUserRole, User, UserUpdatePayload } from "../../api/user/UserApi";
-
-const ROLE_BADGE: Record<BackendUserRole, string> = {
-  ADMIN: "red",
-  OPERATOR: "blue",
-  TEACHER: "amber",
-  STUDENT: "green",
-};
+import RoleBadge from "../../../components/common_components/role_badge/RoleBadge";
+import { deleteUser, getAllUsers, getUserById, updateUser } from "../../api/user/UserApi";
+import type { User, UserUpdatePayload } from "../../api/user/UserApi";
 
 // Users are created through registration or the operator / teacher / student
 // screens, so this page only lists, edits and deletes.
@@ -33,17 +27,24 @@ const config: CrudPageConfig<User, UserUpdatePayload> = {
     },
   ],
   columns: [
-    { key: "id", label: "ID", sortKey: "id" },
-    { key: "name", label: "Name", sortKey: "name" },
+    { key: "name", label: "Name", sortKey: "name", link: true },
     { key: "email", label: "Email", sortKey: "email" },
-    { key: "phone_number", label: "Phone" },
-    {
-      key: "role",
-      label: "Role",
-      sortKey: "role",
-      render: (row) => <span className={`status-badge ${ROLE_BADGE[row.role] ?? ""}`}>{row.role.toLowerCase()}</span>,
-    },
+    { key: "role", label: "Role", sortKey: "role", render: (row) => <RoleBadge role={row.role} /> },
     { key: "institution", label: "Institution", render: (row) => row.institution?.name ?? "-" },
+  ],
+  getById: getUserById,
+  titleKey: "name",
+  detailSections: [
+    {
+      title: "User Details",
+      fields: [
+        { key: "email", label: "Email" },
+        { key: "phone_number", label: "Phone Number" },
+        { key: "role", label: "Role", render: (row) => <RoleBadge role={row.role} /> },
+        { key: "institution", label: "Institution", render: (row) => row.institution?.name ?? "-" },
+        { key: "address", label: "Address", fullWidth: true },
+      ],
+    },
   ],
   fields: [
     { name: "name", label: "Name", required: true },

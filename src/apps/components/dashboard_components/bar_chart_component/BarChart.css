@@ -1,0 +1,43 @@
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  padding-top: 10px;
+}
+
+.bar-chart-column {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+}
+
+.bar-chart-bar {
+  width: 100%;
+  max-width: 48px;
+  min-height: 2px;
+  border-radius: 8px 8px 0 0;
+  background: #ff2e2e;
+  transition: height 0.3s ease;
+}
+
+.bar-chart-value {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.bar-chart-label {
+  font-size: 13px;
+  color: #777777;
+}
+
+.bar-chart-empty {
+  margin: 0;
+  padding: 40px 0;
+  text-align: center;
+  color: #888888;
+  font-size: 14px;
+}

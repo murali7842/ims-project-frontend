@@ -66,6 +66,13 @@ export const SIDEBAR_MENU: Record<UserRole, MenuItem[]> = {
     PAYMENTS,
     REPORTS,
   ],
-  teacher: [DASHBOARD, STUDENTS, COURSES, BATCHES, EXAMS, ATTENDANCE],
+  // Same pages, scoped by the backend to the teacher's own courses; read-only except Exams
+  teacher: [
+    DASHBOARD,
+    { ...COURSES, label: "My Courses" },
+    { ...BATCHES, label: "My Batches" },
+    { ...STUDENTS, label: "My Students" },
+    EXAMS,
+  ],
   student: [DASHBOARD, COURSES, EXAMS, ATTENDANCE, PAYMENTS],
 };

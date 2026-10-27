@@ -10,7 +10,6 @@ interface LoginInputProps {
   eyeIcon?: string;
   showEye?: boolean;
   onEyeClick?: () => void;
-  isActive?: boolean;
 }
 
 const LoginInput = ({ 
@@ -23,12 +22,12 @@ const LoginInput = ({
   eyeIcon,
   showEye = false,
   onEyeClick,
-  isActive = false
 }: LoginInputProps) => {
   return (
     <div className="login-input-container">
       <label>{label}</label>
-      <div className={`input-group ${isActive ? 'active' : ''}`}>
+      {/* Underline turns red while the field is focused (see LoginInput.css) */}
+      <div className="input-group">
         {icon && <img src={icon} alt={label} />}
         <input 
           type={type} 

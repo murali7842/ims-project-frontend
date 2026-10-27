@@ -1,5 +1,5 @@
 import { axiosInstance } from "../../../../config/config";
-import type { ApiResponse, ListParams, PaginatedResponse } from "../../../types/api";
+import type { ApiResponse, DropDown, ListParams, PaginatedResponse } from "../../../types/api";
 
 export type BatchMode = "ONLINE" | "OFFLINE" | "HYBRID";
 
@@ -13,6 +13,21 @@ export interface Batch {
   mode: BatchMode;
   course_id: number;
   institution_id: number;
+}
+
+// GET /batch/{id}: related records as { id, name } plus seat counts
+export interface BatchDetail {
+  id: number;
+  name: string;
+  timing: string;
+  student_limit: number;
+  start_date: string;
+  end_date: string;
+  mode: BatchMode;
+  course: DropDown | null;
+  institution: DropDown | null;
+  total_students: number;
+  available_seats: number;
 }
 
 export interface BatchCreatePayload {
@@ -29,13 +44,14 @@ export interface BatchCreatePayload {
 // The institution can't be changed after creation
 export type BatchUpdatePayload = Partial<Omit<BatchCreatePayload, "institution_id">>;
 
+// Filters: institution_id (admin only; operators are scoped by the backend)
 export const getAllBatches = async (params: ListParams = {}) => {
   const response = await axiosInstance.get<PaginatedResponse<Batch>>("batch/get_all_batches", { params });
   return response.data;
 };
 
 export const getBatchById = async (id: number) => {
-  const response = await axiosInstance.get<ApiResponse<Batch>>(`batch/${id}`);
+  const response = await axiosInstance.get<ApiResponse<BatchDetail>>(`batch/${id}`);
   return response.data;
 };
 

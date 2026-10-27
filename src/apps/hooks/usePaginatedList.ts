@@ -8,6 +8,8 @@ interface Options {
   size?: number;
   sortBy?: string;
   sortOrder?: SortOrder;
+  // Sent with every request, e.g. { institution_id } for operators. Keep the object stable (useMemo).
+  baseParams?: ListParams;
 }
 
 interface ListState<T> {
@@ -22,7 +24,7 @@ interface ListState<T> {
 // `fetcher` must be stable (a module level API function).
 export const usePaginatedList = <T>(
   fetcher: (params: ListParams) => Promise<PaginatedResponse<T>>,
-  { size = 10, sortBy, sortOrder = "desc" }: Options = {}
+  { size = 10, sortBy, sortOrder = "desc", baseParams }: Options = {}
 ) => {
   const [page, setPage] = useState(1);
   const [search, setSearchValue] = useState("");
@@ -45,6 +47,7 @@ export const usePaginatedList = <T>(
 
   const params = useMemo(() => {
     const result: ListParams = {
+      ...baseParams,
       page,
       size,
       search: debouncedSearch || undefined,
@@ -55,7 +58,7 @@ export const usePaginatedList = <T>(
       if (value) result[key] = value;
     });
     return result;
-  }, [page, size, debouncedSearch, filters, sort]);
+  }, [baseParams, page, size, debouncedSearch, filters, sort]);
 
   const requestKey = `${JSON.stringify(params)}#${reloadCount}`;
 
