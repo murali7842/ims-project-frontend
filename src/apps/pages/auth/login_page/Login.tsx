@@ -1,4 +1,4 @@
-import "./login.css";
+import "./Login.css";
 import { useState } from "react";
 import { login, startSession } from "../../../pages/api/auth/AuthApi";
 import { useNavigate } from "react-router-dom";
